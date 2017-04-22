@@ -27,8 +27,12 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/usart.h>
 
-#define LED_DISCO_GREEN_PORT GPIOD
-#define LED_DISCO_GREEN_PIN GPIO12
+// #define LED_DISCO_GREEN_PORT GPIOD
+// #define LED_DISCO_GREEN_PIN GPIO12
+
+#define LED_DISCO_GREEN_PORT GPIOE
+#define LED_DISCO_GREEN_PIN GPIO0
+
 
 // #define USART_CONSOLE USART2
 #define USART_CONSOLE USART1
@@ -38,8 +42,10 @@ int _write(int file, char *ptr, int len);
 static void clock_setup(void)
 {
 	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+
 	/* Enable GPIOD clock for LED & USARTs. */
-	rcc_periph_clock_enable(RCC_GPIOD);
+	rcc_periph_clock_enable(RCC_GPIOE);  // GREEN
+
 	rcc_periph_clock_enable(RCC_GPIOA);
 
 	/* Enable clocks for USART2 and dac */
@@ -144,8 +150,8 @@ int main(void)
 	dac_setup();
 
 	/* green led for ticking */
-	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
-			LED_DISCO_GREEN_PIN);
+  // 	gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, LED_DISCO_GREEN_PIN);
+  gpio_mode_setup(LED_DISCO_GREEN_PORT, GPIO_MODE_OUTPUT, GPIO_OTYPE_OD, LED_DISCO_GREEN_PIN);
 
 	while (1) {
 		uint16_t input_adc0 = read_adc_naiive(0);

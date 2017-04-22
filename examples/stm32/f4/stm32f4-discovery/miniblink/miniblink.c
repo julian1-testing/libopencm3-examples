@@ -18,55 +18,75 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// #include <libopencm3/stm32/rcc.h>
+// #include <libopencm3/stm32/gpio.h>
+
+#include <stdlib.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/usb/usbd.h>
+#include <libopencm3/usb/cdc.h>
+#include <libopencm3/cm3/scb.h>
+
+
+//#include <libopencm3/stm32/f1/rcc.h>
+// #include <libopencm3/stm32/f1/gpio.h>
 
 static void gpio_setup(void)
 {
-	/* Enable GPIOD clock. */
+	/* Enable GPIOC clock. */
 	/* Manually: */
 	// RCC_AHB1ENR |= RCC_AHB1ENR_IOPDEN;
 	/* Using API functions: */
-	rcc_periph_clock_enable(RCC_GPIOD);
+	rcc_periph_clock_enable(RCC_GPIOE);
 
-	/* Set GPIO12 (in GPIO port D) to 'output push-pull'. */
+	/* Set GPIO1 (in GPIO port D) to 'output push-pull'. */
 	/* Manually: */
-	// GPIOD_CRH = (GPIO_CNF_OUTPUT_PUSHPULL << (((8 - 8) * 4) + 2));
-	// GPIOD_CRH |= (GPIO_MODE_OUTPUT_2_MHZ << ((8 - 8) * 4));
+	// GPIOC_CRH = (GPIO_CNF_OUTPUT_PUSHPULL << (((8 - 8) * 4) + 2));
+	// GPIOC_CRH |= (GPIO_MODE_OUTPUT_2_MHZ << ((8 - 8) * 4));
 	/* Using API functions: */
-	gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO12);
+  // gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_OTYPE_OD, GPIO1);
+  // gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO1);
+
+  gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_OTYPE_OD, GPIO0);
+  
+
 }
+
+static char *my_hithere = "hithere";
 
 int main(void)
 {
 	int i;
+  volatile char *my_hithere2 = my_hithere;
 
 	gpio_setup();
 
 	/* Blink the LED (PC8) on the board. */
 	while (1) {
 		/* Manually: */
-		// GPIOD_BSRR = GPIO12;		/* LED off */
+		// GPIOC_BSRR = GPIO1;		/* LED off */
 		// for (i = 0; i < 1000000; i++)	/* Wait a bit. */
 		//	__asm__("nop");
-		// GPIOD_BRR = GPIO12;		/* LED on */
+		// GPIOC_BRR = GPIO1;		/* LED on */
 		// for (i = 0; i < 1000000; i++)	/* Wait a bit. */
 		//	__asm__("nop");
 
 		/* Using API functions gpio_set()/gpio_clear(): */
-		// gpio_set(GPIOD, GPIO12);	/* LED off */
+		// gpio_set(GPIOC, GPIO1);	/* LED off */
 		// for (i = 0; i < 1000000; i++)	/* Wait a bit. */
 		//	__asm__("nop");
-		// gpio_clear(GPIOD, GPIO12);	/* LED on */
+		// gpio_clear(GPIOC, GPIO1);	/* LED on */
 		// for (i = 0; i < 1000000; i++)	/* Wait a bit. */
 		//	__asm__("nop");
 
 		/* Using API function gpio_toggle(): */
-		gpio_toggle(GPIOD, GPIO12);	/* LED on/off */
+
+		gpio_toggle(GPIOE, GPIO0);	/* LED on/off */
 		for (i = 0; i < 1000000; i++) {	/* Wait a bit. */
 			__asm__("nop");
 		}
 	}
 
-	return 0;
+	return (int) (void *)my_hithere2 ;
 }

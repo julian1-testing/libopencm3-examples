@@ -30,7 +30,8 @@
 #define LED_DISCO_GREEN_PORT GPIOD
 #define LED_DISCO_GREEN_PIN GPIO12
 
-#define USART_CONSOLE USART2
+// #define USART_CONSOLE USART2
+#define USART_CONSOLE USART1
 
 int _write(int file, char *ptr, int len);
 
@@ -42,20 +43,26 @@ static void clock_setup(void)
 	rcc_periph_clock_enable(RCC_GPIOA);
 
 	/* Enable clocks for USART2 and dac */
-	rcc_periph_clock_enable(RCC_USART2);
+	// rcc_periph_clock_enable(RCC_USART2);
+  // JA
+	rcc_periph_clock_enable(RCC_USART1);
 	rcc_periph_clock_enable(RCC_DAC);
 
 	/* And ADC*/
 	rcc_periph_clock_enable(RCC_ADC1);
 }
 
+// uart1 - pa9 tx and pa10 rx
+
 static void usart_setup(void)
 {
 	/* Setup GPIO pins for USART2 transmit. */
-	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2);
+	// gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO2);
+	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);
 
 	/* Setup USART2 TX pin as alternate function. */
-	gpio_set_af(GPIOA, GPIO_AF7, GPIO2);
+	// gpio_set_af(GPIOA, GPIO_AF7, GPIO2);
+	gpio_set_af(GPIOA, GPIO_AF7, GPIO9);
 
 	usart_set_baudrate(USART_CONSOLE, 115200);
 	usart_set_databits(USART_CONSOLE, 8);

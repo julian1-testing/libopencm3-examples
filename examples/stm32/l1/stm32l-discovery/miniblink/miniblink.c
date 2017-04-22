@@ -61,7 +61,7 @@ int main(void)
 
 		/* Using API function gpio_toggle(): */
 		gpio_toggle(GPIOB, GPIO6);	/* LED on/off */
-		for (i = 0; i < 1000000; i++) {	/* Wait a bit. */
+		for (i = 0; i < 100000; i++) {	/* Wait a bit. */
 			__asm__("nop");
 		}
 	}

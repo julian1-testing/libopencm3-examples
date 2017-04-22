@@ -64,7 +64,15 @@ static void clock_setup(void)
   // needed?
   rcc_wait_for_sysclk_status(RCC_HSE);
 
+  // turn internal clock off
 	rcc_osc_off(RCC_HSI);
+
+	rcc_ahb_frequency  = 8000000;
+	rcc_apb1_frequency = 8000000;
+	rcc_apb2_frequency = 8000000;
+
+
+
 
 
 	/* Enable GPIOD clock for LED & USARTs. */

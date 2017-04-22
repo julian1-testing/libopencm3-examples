@@ -41,12 +41,36 @@ int _write(int file, char *ptr, int len);
 
 static void clock_setup(void)
 {
-	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+  /* works
+  // hse is the external clock  - need to check its 8MHz
+//	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+  */
+
+  /* works 
+  // ok 48mhz - ok - and uart appears to work ok - .
+	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_48MHZ]);
+  */
+
+  /* appears to work - although screws up serial speed */
+      
+  //////////////////////
+  // Enable external high-speed oscillator 8MHz.
+  rcc_osc_on(RCC_HSE);
+  rcc_wait_for_osc_ready(RCC_HSE);
+
+  // Select HSE as SYSCLK source.
+  rcc_set_sysclk_source(RCC_CFGR_SW_HSE);
+
+  // needed?
+  rcc_wait_for_sysclk_status(RCC_HSE);
+
+	rcc_osc_off(RCC_HSI);
+
 
 	/* Enable GPIOD clock for LED & USARTs. */
 	rcc_periph_clock_enable(RCC_GPIOE);  // GREEN
 
-	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOA);   // for uart io
 
 	/* Enable clocks for USART2 and dac */
 	// rcc_periph_clock_enable(RCC_USART2);

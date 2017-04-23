@@ -41,36 +41,38 @@ int _write(int file, char *ptr, int len);
 
 static void clock_setup(void)
 {
-  /* works
-  // hse is the external clock  - need to check its 8MHz
-//	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
-  */
+  if(false) {
 
-  /* works 
-  // ok 48mhz - ok - and uart appears to work ok - .
-	rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_48MHZ]);
-  */
+    // works - uses 50mA
+    // hse is the external clock  - need to check its 8MHz
+    rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+  } else if(false) {
 
-  /* appears to work - although screws up serial speed */
-      
-  //////////////////////
-  // Enable external high-speed oscillator 8MHz.
-  rcc_osc_on(RCC_HSE);
-  rcc_wait_for_osc_ready(RCC_HSE);
+    // works - uses 25mA 
+    // ok 48mhz - ok - and uart appears to work ok - .
+    rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_48MHZ]);
+  } else if(true) {
 
-  // Select HSE as SYSCLK source.
-  rcc_set_sysclk_source(RCC_CFGR_SW_HSE);
+    // works - uses 19mA 
 
-  // needed?
-  rcc_wait_for_sysclk_status(RCC_HSE);
+    // Enable external high-speed oscillator - 8MHz.
+    rcc_osc_on(RCC_HSE);
+    rcc_wait_for_osc_ready(RCC_HSE);
 
-  // turn internal clock off
-	rcc_osc_off(RCC_HSI);
+    // Select HSE as SYSCLK source.
+    rcc_set_sysclk_source(RCC_CFGR_SW_HSE);
 
-	rcc_ahb_frequency  = 8000000;
-	rcc_apb1_frequency = 8000000;
-	rcc_apb2_frequency = 8000000;
+    // needed?
+    rcc_wait_for_sysclk_status(RCC_HSE);
 
+	  // Set the peripheral clock frequencies used.
+    rcc_ahb_frequency  = 8000000;
+    rcc_apb1_frequency = 8000000;
+    rcc_apb2_frequency = 8000000;
+
+    // turn internal clock off
+    rcc_osc_off(RCC_HSI);
+  }
 
 
 

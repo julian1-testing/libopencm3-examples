@@ -103,18 +103,7 @@ static void gpio_setup(void)
     floating pins, they must either be configured in analog mode ....
   */
 
-/*
-  // gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL); // may need to do everything except 13 and 14
-  // for SWD
-  gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13);
-  gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO14);
-
-  // one is a pa13 data, pa14 clock - and the other is bidirectional the other rx....
-*/
-  // leave GPIOA alone - since PA13 and PA14 which are SWD
-
-  // actually we should probably just try to do everything except ...
-
+  // leave PA13 and PA14 alone - since used for SWD
   gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL & ~ (GPIO13 | GPIO14) );  
 
   // gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);  // disable swt
@@ -127,6 +116,8 @@ static void gpio_setup(void)
 
   // change led for open-drain 
   gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_OTYPE_OD, GPIO0);
+
+  // disabling the clocks after gpio setup still uses more power - 12mA rather than 7mA
 }
 
 

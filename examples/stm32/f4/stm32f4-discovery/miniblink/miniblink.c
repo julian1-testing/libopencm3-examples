@@ -85,9 +85,8 @@ static void clock_setup(void)
 
 static void gpio_setup(void)
 {
-	/* Using API functions: */
-	// rcc_periph_clock_enable(RCC_GPIOE);
-
+  // enable clocks - uses less power (7-8mA) with clocks enabled 
+  // perhaps because the clock is needed to configure the ports
 	rcc_periph_clock_enable(RCC_GPIOA);
 	rcc_periph_clock_enable(RCC_GPIOB);
 	rcc_periph_clock_enable(RCC_GPIOC);
@@ -96,9 +95,9 @@ static void gpio_setup(void)
 	rcc_periph_clock_enable(RCC_GPIOF);
 	rcc_periph_clock_enable(RCC_GPIOG);
 
-  // configure pins as analog function following datasheet to reduce power consumption
   /*
-    See, datasheet,
+    - configure pins as analog function following datasheet to reduce power consumption
+    - See, datasheet,
     Any floating input pin can also settle to an intermediate voltage level or switch inadvertently,
     as a result of external electromagnetic noise. To avoid current consumption related to
     floating pins, they must either be configured in analog mode ....
@@ -109,9 +108,12 @@ static void gpio_setup(void)
   // for SWD
   gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13);
   gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO14);
+
+  // one is a pa13 data, pa14 clock - and the other is bidirectional the other rx....
 */
   // leave GPIOA alone - since PA13 and PA14 which are SWD
 
+  gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);  // disable swt
   gpio_mode_setup(GPIOB, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
   gpio_mode_setup(GPIOC, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
   gpio_mode_setup(GPIOD, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);

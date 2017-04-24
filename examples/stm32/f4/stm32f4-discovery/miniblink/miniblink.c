@@ -96,17 +96,28 @@ static void gpio_setup(void)
 	rcc_periph_clock_enable(RCC_GPIOF);
 	rcc_periph_clock_enable(RCC_GPIOG);
 
- 
-  // GPIO_MODE_ANALOG, Configure pin as analog function
-  gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
+  // configure pins as analog function following datasheet to reduce power consumption
+  /*
+    See, datasheet,
+    Any floating input pin can also settle to an intermediate voltage level or switch inadvertently,
+    as a result of external electromagnetic noise. To avoid current consumption related to
+    floating pins, they must either be configured in analog mode ....
+  */
+
+/*
+  // gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL); // may need to do everything except 13 and 14
+  // for SWD
+  gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13);
+  gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO14);
+*/
+  // leave GPIOA alone - since PA13 and PA14 which are SWD
+
   gpio_mode_setup(GPIOB, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
   gpio_mode_setup(GPIOC, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
   gpio_mode_setup(GPIOD, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
   gpio_mode_setup(GPIOE, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
   gpio_mode_setup(GPIOF, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
   gpio_mode_setup(GPIOG, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
-
-  // gpio_mode_setup(GPIOE, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
 
   // change led for open-drain 
   gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_OTYPE_OD, GPIO0);

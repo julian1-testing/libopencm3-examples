@@ -85,8 +85,7 @@ static void clock_setup(void)
 
 static void gpio_setup(void)
 {
-  // enable clocks - uses less power (7-8mA) with clocks enabled 
-  // perhaps because the clock is needed to configure the ports
+  // enable clocks - surprisingly uses less power (7mA versus 12mA) with clocks enabled 
 	rcc_periph_clock_enable(RCC_GPIOA);
 	rcc_periph_clock_enable(RCC_GPIOB);
 	rcc_periph_clock_enable(RCC_GPIOC);
@@ -105,8 +104,7 @@ static void gpio_setup(void)
 
   // leave PA13 and PA14 alone - since used for SWD
   gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL & ~ (GPIO13 | GPIO14) );  
-
-  // gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);  // disable swt
+  // other ports are all analog
   gpio_mode_setup(GPIOB, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
   gpio_mode_setup(GPIOC, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
   gpio_mode_setup(GPIOD, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
@@ -117,7 +115,7 @@ static void gpio_setup(void)
   // change led for open-drain 
   gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_OTYPE_OD, GPIO0);
 
-  // disabling the clocks after gpio setup still uses more power - 12mA rather than 7mA
+  // note - disabling the clocks after gpio_mode_setup() will still uses more power - 12mA rather than 7mA
 }
 
 

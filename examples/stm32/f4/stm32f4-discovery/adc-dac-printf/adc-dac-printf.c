@@ -27,6 +27,8 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/usart.h>
 
+#include <libopencm3/stm32/pwr.h>
+
 // #define LED_DISCO_GREEN_PORT GPIOD
 // #define LED_DISCO_GREEN_PIN GPIO12
 
@@ -59,6 +61,10 @@ static void clock_setup(void)
     rcc_osc_on(RCC_HSE);
     rcc_wait_for_osc_ready(RCC_HSE);
 
+    /* disable high performance mode */
+    pwr_set_vos_scale(PWR_SCALE2);
+
+
     // Select HSE as SYSCLK source.
     rcc_set_sysclk_source(RCC_CFGR_SW_HSE);
 
@@ -73,8 +79,6 @@ static void clock_setup(void)
     // turn internal clock off
     rcc_osc_off(RCC_HSI);
   }
-
-
 
 
 	/* Enable GPIOD clock for LED & USARTs. */

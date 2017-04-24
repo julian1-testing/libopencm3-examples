@@ -28,30 +28,92 @@
 #include <libopencm3/usb/cdc.h>
 #include <libopencm3/cm3/scb.h>
 
+#include <libopencm3/stm32/pwr.h>
 
-//#include <libopencm3/stm32/f1/rcc.h>
-// #include <libopencm3/stm32/f1/gpio.h>
+//#include <libopencm3/stm32/flash.h>
+
+
+static void clock_setup(void)
+{
+  if(false) {
+
+    // works - uses 50mA
+    // hse is the external clock  - need to check its 8MHz
+    rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_168MHZ]);
+  } else if(false) {
+
+    // works - uses 25mA 
+    // ok 48mhz - ok - and uart appears to work ok - .
+    rcc_clock_setup_hse_3v3(&rcc_hse_8mhz_3v3[RCC_CLOCK_3V3_48MHZ]);
+  } else if(true) {
+
+    // works - uses 17mA 
+
+    // Enable external high-speed oscillator - 8MHz.
+    rcc_osc_on(RCC_HSE);
+    rcc_wait_for_osc_ready(RCC_HSE);
+
+    /* disable high performance mode */
+    pwr_set_vos_scale(PWR_SCALE2);
+
+    // Select HSE as SYSCLK source.
+    rcc_set_sysclk_source(RCC_CFGR_SW_HSE);
+
+    // needed?
+    rcc_wait_for_sysclk_status(RCC_HSE);
+
+	  // Set the peripheral clock frequencies used.
+    rcc_ahb_frequency  = 8000000;
+    rcc_apb1_frequency = 8000000;
+    rcc_apb2_frequency = 8000000;
+
+    // turn internal clock off
+    rcc_osc_off(RCC_HSI);
+
+    // 60 flashes - in 1 minute
+
+/*  something about this code - and having the resistor that it doesn't like...
+    rcc_osc_off(RCC_PLL);
+    rcc_osc_off(RCC_LSE);
+    rcc_osc_off(RCC_LSI);
+    rcc_osc_off(RCC_PLLSAI);
+    rcc_osc_off(RCC_PLLI2S);
+*/
+  }
+}
+
 
 static void gpio_setup(void)
 {
-	/* Enable GPIOC clock. */
-	/* Manually: */
-	// RCC_AHB1ENR |= RCC_AHB1ENR_IOPDEN;
 	/* Using API functions: */
+	// rcc_periph_clock_enable(RCC_GPIOE);
+
+	rcc_periph_clock_enable(RCC_GPIOA);
+	rcc_periph_clock_enable(RCC_GPIOB);
+	rcc_periph_clock_enable(RCC_GPIOC);
+	rcc_periph_clock_enable(RCC_GPIOD);
 	rcc_periph_clock_enable(RCC_GPIOE);
+	rcc_periph_clock_enable(RCC_GPIOF);
+	rcc_periph_clock_enable(RCC_GPIOG);
 
-	/* Set GPIO1 (in GPIO port D) to 'output push-pull'. */
-	/* Manually: */
-	// GPIOC_CRH = (GPIO_CNF_OUTPUT_PUSHPULL << (((8 - 8) * 4) + 2));
-	// GPIOC_CRH |= (GPIO_MODE_OUTPUT_2_MHZ << ((8 - 8) * 4));
-	/* Using API functions: */
-  // gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_OTYPE_OD, GPIO1);
-  // gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO1);
+ 
+  // GPIO_MODE_ANALOG, Configure pin as analog function
+  gpio_mode_setup(GPIOA, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
+  gpio_mode_setup(GPIOB, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
+  gpio_mode_setup(GPIOC, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
+  gpio_mode_setup(GPIOD, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
+  gpio_mode_setup(GPIOE, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
+  gpio_mode_setup(GPIOF, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
+  gpio_mode_setup(GPIOG, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
 
+  // gpio_mode_setup(GPIOE, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, GPIO_ALL);
+
+  // change led for open-drain 
   gpio_mode_setup(GPIOE, GPIO_MODE_OUTPUT, GPIO_OTYPE_OD, GPIO0);
-  
-
 }
+
+
+
 
 static char *my_hithere = "hithere";
 
@@ -60,25 +122,11 @@ int main(void)
 	int i;
   volatile char *my_hithere2 = my_hithere;
 
+  clock_setup();
 	gpio_setup();
 
 	/* Blink the LED (PC8) on the board. */
 	while (1) {
-		/* Manually: */
-		// GPIOC_BSRR = GPIO1;		/* LED off */
-		// for (i = 0; i < 1000000; i++)	/* Wait a bit. */
-		//	__asm__("nop");
-		// GPIOC_BRR = GPIO1;		/* LED on */
-		// for (i = 0; i < 1000000; i++)	/* Wait a bit. */
-		//	__asm__("nop");
-
-		/* Using API functions gpio_set()/gpio_clear(): */
-		// gpio_set(GPIOC, GPIO1);	/* LED off */
-		// for (i = 0; i < 1000000; i++)	/* Wait a bit. */
-		//	__asm__("nop");
-		// gpio_clear(GPIOC, GPIO1);	/* LED on */
-		// for (i = 0; i < 1000000; i++)	/* Wait a bit. */
-		//	__asm__("nop");
 
 		/* Using API function gpio_toggle(): */
 
